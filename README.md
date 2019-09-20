@@ -1,7 +1,7 @@
 # Redis Cache Fallback Example
 This Spring Boot project solves the problem of caching while Redis is not highly available.
 
-### Initial Situation
+## Initial Situation
 Spring Boot supports the concept of caching by annotating a method with `@Cacheable`. The following
 code is a snippet from `ItemCacheService.java` that handles caching by Spring. 
 
@@ -80,3 +80,20 @@ $ docker stop redis && docker rm redis
 $ curl -X GET http://localhost:8082/item/8          
 # WARN:  de.adorsys.swi.example.ItemService  : No Redis Connection while fetching item [8]
 ```
+
+## Prometheus Configuration
+
+Prometheus is used to request metrics of this application. To keep its responses as light as 
+possible all `tomcat` metrics will be suppressed.
+
+Furthermore, it is possible to filter specific metrics by adding their names in 
+`application.properties` files using the key `management.custom.exclude`.
+
+IMPORTANT: Prometheus returns key value pairs in Snake case (e.g. `system_cpu_usage 8.0`).
+To suppress a value the application needs keys separated with `.` instead of `_` (e.g. 
+`system.cpu.usage`).
+
+Example:
+```
+management.custom.exclude=process.files.open.files,system.cpu.count,system.cpu.usage
+``` 
